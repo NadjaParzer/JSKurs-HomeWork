@@ -1,0 +1,12 @@
+#age, #tall, #talie, #weight {
+    width: 60px;
+}
+
+
+#result {
+    display: none;
+}
+
+.result {
+    height: 100%;
+}
