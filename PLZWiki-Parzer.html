@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wikipedia Einträge nach PLZ</title>
+</head>
+<body>
+
+<style>
+    body {
+        margin: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    li { 
+        padding-bottom: 10px;
+    }
+    button {
+        width: 8em;
+        font-weight: bold;
+        border:none;
+        outline: none;
+        padding: 7px;
+        border-radius: 5px;
+        border-color: #009900;
+        background-color: #009900;
+        color: white;   
+    }
+    button:active {
+        background-color: darkgreen;
+    }
+    input {
+        padding: 5px;
+    }
+    .error {
+        box-shadow: 0  0 5px red;
+        border: solid 1px red;
+    }
+</style>
+
+<input id="input" placeholder="Enter ZIP Code">
+<button id="btn">Search</button>
+<hr>
+<ol id='list'>
+
+</ol>
+
+<script>
+    const input = document.getElementById('input');
+    const btn = document.getElementById('btn');
+    const list = document.getElementById('list');
+    const span = document.getElementById('span');
+    const xhr = new XMLHttpRequest();
+    const URL = 'http://api.geonames.org/findNearbyWikipediaJSON?country=AT&radius=20&username=wifiwien&postalcode=';
+
+    btn.addEventListener("click", Search);
+
+    function Search (){
+        let x = input.value.trim();
+
+        list.innerText = "";
+        if (isNaN(x)) {
+            input.value = x + ' is not a number!';
+            input.classList.add('error');
+
+            return;
+        };
+        if (x.toString.length == 3) {
+
+            console.log(x.toString());
+            
+            input.value = ' ZIP Code is not correct!';
+            input.classList.add('error');
+            return;
+        }
+    
+        xhr.open('GET', URL + x);
+        xhr.send();
+
+        xhr.onload = function () {
+            let response = JSON.parse(xhr.response);
+            console.log(response);
+            let i;
+            if (response.geonames) {
+            for (i=0; i < response.geonames.length; i++) {
+             list.innerHTML += "<li>" + response.geonames[i].summary + "<a target='_blank' href='https://"+ response.geonames[i].wikipediaUrl.replace("en", "de")  + " '>  Read more ....</a></li>"
+             console.log(response.geonames[i].title);
+            } } else {
+                list.innerText = response.status.message;
+            }
+            
+        }
+
+    }
+</script>
+</body>
+</html>
